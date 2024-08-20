@@ -19,9 +19,12 @@ export default class EnemyController {
   defaultYVelocity = 1;
   moveDownTimerDefault = 30;
   moveDownTimer = this.moveDownTimerDefault;
+  fireBulletTimerDefault = 100;
+  fireBulletTimer = this.fireBulletTimerDefault;
 
-  constructor(canvas) {
+  constructor(canvas, enemyBulletController) {
     this.canvas = canvas;
+    this.enemyBulletController = enemyBulletController;
     this.createEnemies();
   }
 
@@ -30,8 +33,19 @@ export default class EnemyController {
     this.updateVelocityAndDirection();
     this.drawEnemies(ctx);
     this.resetMoveDownTimer();
+    this.fireBullet();
   }
 
+  fireBullet() {
+    this.fireBulletTimer--;
+    if (this.fireBulletTimer <= 0) {
+      this.fireBulletTimer = this.fireBulletTimerDefault;
+      const allEnemies = this.enemyRows.flat();
+      const enemyIndex = Math.floor(Math.random() * allEnemies.length);
+      const enemy = allEnemies[enemyIndex];
+      this.enemyBulletController.shoot(enemy.x + enemy.width / 2, enemy.y, -3);
+    }
+  }
   resetMoveDownTimer() {
     if (this.moveDownTimer <= 0) {
       this.moveDownTimer = this.moveDownTimerDefault;
